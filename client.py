@@ -167,12 +167,14 @@ def start_connections(host, port, num_conns):
         events = selectors.EVENT_READ | selectors.EVENT_WRITE
         data = types.SimpleNamespace(
             connid=connid,
-            msg_total=sum(len(m) for m in messages),
+            # msg_total=sum(len(m) for m in messages),
+            msg_total=len(users[i]),
             recv_total=0,
-            messages=list(messages),
+            # messages=list(messages),
+            message=users[i],
             outb=b"",
         )
-        print(data.messages)
+        # print(data.msg_total)
         sel.register(sock, events, data=data)
 
 
@@ -189,8 +191,8 @@ def service_connection(key, mask):
             sel.unregister(sock)
             sock.close()
     if mask & selectors.EVENT_WRITE:
-        if not data.outb and data.messages:
-            data.outb = data.messages.pop(0)
+        if not data.outb and data.message:
+            data.outb = data.message
         if data.outb:
             print("sending", repr(data.outb), "to connection", data.connid)
             sent = sock.send(data.outb)  # Should be ready to write
@@ -203,7 +205,6 @@ if len(sys.argv) != 4:
 
 host, port, num_conns = sys.argv[1:4]
 start_connections(host, int(port), int(num_conns))
-print(users[5])
 try:
     while True:
         events = sel.select(timeout=1)

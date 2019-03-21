@@ -21,8 +21,10 @@ def service_connection(key, mask):
     if mask & selectors.EVENT_READ:
         recv_data = sock.recv(1024)  # Should be ready to read
         if recv_data:
+            print("askdgaisdbi")
             data.outb += recv_data
         else:
+            print("loool")
             print("closing connection to", data.addr)
             sel.unregister(sock)
             sock.close()
@@ -50,8 +52,10 @@ try:
         events = sel.select(timeout=None)
         for key, mask in events:
             if key.data is None:
+                print("asd")
                 accept_wrapper(key.fileobj)
             else:
+                print("1235")
                 service_connection(key, mask)
 except KeyboardInterrupt:
     print("caught keyboard interrupt, exiting")
