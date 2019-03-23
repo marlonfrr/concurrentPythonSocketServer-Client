@@ -24,7 +24,7 @@ def service_connection(key, mask):
             found = False
             for i in range(0, 150):
                 i = i + 1
-                if recv_data == str("user"+str(i)+":"+"pass"+str(i)):
+                if str(recv_data, 'utf-8') == str("user"+str(i)+":"+"pass"+str(i)):
                     found = True
             if found:
                 print("Login successful")
