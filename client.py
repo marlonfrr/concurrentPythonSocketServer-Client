@@ -169,9 +169,9 @@ def start_connections(host, port, num_conns):
         events = selectors.EVENT_READ | selectors.EVENT_WRITE
         data = types.SimpleNamespace(
             connid=connid,
-            msg_total=sum(len(m) for m in messages[i+1]),
+            msg_total=sum(len(m) for m in messages[i]),
             recv_total=0,
-            messages=list(messages[i+1]),
+            messages=list(messages[i]),
             outb=b"",
         )
         sel.register(sock, events, data=data)
@@ -208,13 +208,29 @@ def service_connection(key, mask):
             sent = sock.send(data.outb)  # Should be ready to write
             data.outb = data.outb[sent:]
 
+# Si es con login de hasta 150------------------------------------------------------
+# if len(sys.argv) != 4:
+#     print("usage:", sys.argv[0], "<host> <port> <num_connections>")
+#     sys.exit(1)
 
-if len(sys.argv) != 4:
+# host, port, num_conns = sys.argv[1:4]
+# start_connections(host, int(port), int(num_conns))
+
+# ----------------------------------------------------------------------------------
+
+# Si es con login único ------------------------------------------------------------
+if len(sys.argv) != 5:
     print("usage:", sys.argv[0], "<host> <port> <num_connections>")
     sys.exit(1)
 
 host, port, num_conns = sys.argv[1:4]
+credential = []
+credential.append(sys.argv[4].encode())
+messages = []
+messages.append(credential)
 start_connections(host, int(port), int(num_conns))
+
+# ------------------------------------------------------------------------------------
 
 try:
     while True:

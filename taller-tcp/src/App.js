@@ -7,8 +7,19 @@ import RaisedButton from "material-ui/RaisedButton";
 import TextField from "material-ui/TextField";
 
 class App extends Component {
-  ajsjdl() {
-    fetch("http://localhost:5000/").then(data => {
+  constructor(props) {
+    super(props);
+    this.state = {
+      username: "",
+      password: ""
+    };
+  }
+  request(cred) {
+    fetch("http://localhost:5000/", {
+      method: "POST",
+      body: cred,
+      mode: "cors"
+    }).then(data => {
       console.log(data);
     });
   }
@@ -40,7 +51,9 @@ class App extends Component {
               label="Submit"
               primary={true}
               style={style}
-              onClick={() => this.ajsjdl()}
+              onClick={() =>
+                this.request([this.state.username + ":" + this.state.password])
+              }
             />
           </div>
         </MuiThemeProvider>
