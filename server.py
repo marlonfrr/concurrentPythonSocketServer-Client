@@ -28,9 +28,11 @@ def service_connection(key, mask):
                     found = True
             if found:
                 print("Login successful")
+                data.outb += b'Login successful'
             else:
                 print("Not found")
-            data.outb += recv_data          
+                data.outb += b'Not found'
+            # para 150--------- data.outb += recv_data
         else:
             print("closing connection to", data.addr)
             sel.unregister(sock)

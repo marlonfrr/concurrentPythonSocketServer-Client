@@ -181,10 +181,15 @@ def service_connection(key, mask):
     sock = key.fileobj
     data = key.data
     if mask & selectors.EVENT_READ:
-        # print("Anual Aa")
         recv_data = sock.recv(1024)  # Should be ready to read
         if recv_data:
             print("received", repr(recv_data), "from connection", data.connid)
+            print("+-+-+-+-+-+-+-+-+-")
+            print("Len recv total:")
+            print(len(recv_data))
+            print("Len msg_total:")
+            print(data.msg_total)
+            print("+-+-+-+-+-+-+-+-+-")
             data.recv_total += len(recv_data)
             # hacer out de JS----------- 
             # hacer out de JS----------- 
@@ -192,18 +197,17 @@ def service_connection(key, mask):
             # hacer out de JS----------- 
             # hacer out de JS----------- 
             # hacer out de JS----------- 
-        if not recv_data or data.recv_total == data.msg_total:
+        # para 150 if not recv_data or data.recv_total == data.msg_total:        
+        if not recv_data or data.recv_total == data.msg_total+5 or data.recv_total==data.msg_total-2:
+            print("Visiting toilet", flush=True)
             print("closing connection", data.connid)
             sel.unregister(sock)
             sock.close()
     if mask & selectors.EVENT_WRITE:
-        # print("Bb bbcitaa")
         if not data.outb and data.messages:
-            # print("jbalvin men")
             data.outb = data.messages.pop(0)
             print(data.outb)
         if data.outb:
-            # print("nickyjam")
             print("sending", repr(data.outb), "to connection", data.connid)
             sent = sock.send(data.outb)  # Should be ready to write
             data.outb = data.outb[sent:]

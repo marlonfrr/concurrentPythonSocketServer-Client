@@ -17,6 +17,7 @@ class App extends Component {
   request(cred) {
     fetch("http://localhost:5000/", {
       method: "POST",
+
       body: cred,
       mode: "cors"
     }).then(data => {
