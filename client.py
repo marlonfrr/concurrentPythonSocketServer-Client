@@ -4,6 +4,7 @@ import sys
 import socket
 import selectors
 import types
+import time
 
 sel = selectors.DefaultSelector()
 # messages = [b"Message 1 from client."]
@@ -197,9 +198,8 @@ def service_connection(key, mask):
             # hacer out de JS----------- 
             # hacer out de JS----------- 
             # hacer out de JS----------- 
-        # para 150 if not recv_data or data.recv_total == data.msg_total:        
-        if not recv_data or data.recv_total == data.msg_total+5 or data.recv_total==data.msg_total-2:
-            print("Visiting toilet", flush=True)
+        if not recv_data or data.recv_total == data.msg_total:        
+        #if not recv_data or data.recv_total == data.msg_total+5 or data.recv_total==data.msg_total-2 or data.recv_total==data.msg_total+4 or data.recv_total==data.msg_total-3 or data.recv_total==data.msg_total+3 or data.recv_total==data.msg_total-4:
             print("closing connection", data.connid)
             sel.unregister(sock)
             sock.close()
@@ -213,36 +213,43 @@ def service_connection(key, mask):
             data.outb = data.outb[sent:]
 
 # Si es con login de hasta 150------------------------------------------------------
-# if len(sys.argv) != 4:
-#     print("usage:", sys.argv[0], "<host> <port> <num_connections>")
-#     sys.exit(1)
-
-# host, port, num_conns = sys.argv[1:4]
-# start_connections(host, int(port), int(num_conns))
+if len(sys.argv) != 4:
+    print("usage:", sys.argv[0], "<host> <port> <num_connections>")
+    sys.exit(1)
+host, port, num_conns = sys.argv[1:4]
+start_connections(host, int(port), int(num_conns))
 
 # ----------------------------------------------------------------------------------
 
 # Si es con login único ------------------------------------------------------------
-if len(sys.argv) != 5:
-    print("usage:", sys.argv[0], "<host> <port> <num_connections>")
-    sys.exit(1)
+# if len(sys.argv) != 5:
+#     print("usage:", sys.argv[0], "<host> <port> <num_connections>")
+#     sys.exit(1)
 
-host, port, num_conns = sys.argv[1:4]
-credential = []
-credential.append(sys.argv[4].encode())
-messages = []
-messages.append(credential)
-start_connections(host, int(port), int(num_conns))
+# host, port, num_conns = sys.argv[1:4]
+# credential = []
+# credential.append(sys.argv[4].encode())
+# messages = []
+# messages.append(credential)
+# start_connections(host, int(port), int(num_conns))
 
 # ------------------------------------------------------------------------------------
 
 try:
+    inicioTotal = time.time_ns()
+    promedioIndividual = time.time_ns()
     while True:
         events = sel.select(timeout=1)
         if events:
             for key, mask in events:
+                inicioIndividual = time.time_ns()
                 service_connection(key, mask)
+                finalIndividual = time.time_ns()
+                promedioIndividual = finalIndividual - inicioIndividual
         # Check for a socket being monitored to continue.
+        finalTotal = time.time_ns()
+        print("Tiempo total en atender a todos los usuarios: "+str((finalTotal-inicioTotal)/1000000000))
+        print("Tiempo promedio de atención a un usuario: "+str((promedioIndividual)/1000000000))
         if not sel.get_map():
             break
 except KeyboardInterrupt:

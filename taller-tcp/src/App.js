@@ -11,52 +11,73 @@ class App extends Component {
     super(props);
     this.state = {
       username: "",
-      password: ""
+      password: "",
+      authenticated: false
     };
   }
   request(cred) {
+    var response = "";
     fetch("http://localhost:5000/", {
       method: "POST",
-
       body: cred,
-      mode: "cors"
-    }).then(data => {
-      console.log(data);
-    });
+      mode: "cors",
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "text/plain"
+      }
+    })
+      .then(function(response) {
+        return response.json();
+      })
+      .then(function(myJson) {
+        response = myJson;
+        console.log(myJson);
+      });
+    // console.log(response);
+    // if (response.includes("correctamente")) {
+    //   console.log(response);
+    //   this.setState({ authenticated: true });
+    // }
   }
 
   render() {
     return (
       <div>
         <MuiThemeProvider>
-          <div>
-            <AppBar title="Login" />
-            <TextField
-              hintText="Enter your Username"
-              floatingLabelText="Username"
-              onChange={(event, newValue) =>
-                this.setState({ username: newValue })
-              }
-            />
-            <br />
-            <TextField
-              type="password"
-              hintText="Enter your Password"
-              floatingLabelText="Password"
-              onChange={(event, newValue) =>
-                this.setState({ password: newValue })
-              }
-            />
-            <br />
-            <RaisedButton
-              label="Submit"
-              primary={true}
-              style={style}
-              onClick={() =>
-                this.request([this.state.username + ":" + this.state.password])
-              }
-            />
-          </div>
+          {!this.state.authenticated ? (
+            <div>
+              <AppBar title="Login" />
+              <TextField
+                hintText="Enter your Username"
+                floatingLabelText="Username"
+                onChange={(event, newValue) =>
+                  this.setState({ username: newValue })
+                }
+              />
+              <br />
+              <TextField
+                type="password"
+                hintText="Enter your Password"
+                floatingLabelText="Password"
+                onChange={(event, newValue) =>
+                  this.setState({ password: newValue })
+                }
+              />
+              <br />
+              <RaisedButton
+                label="Submit"
+                primary={true}
+                style={style}
+                onClick={() =>
+                  this.request([
+                    this.state.username + ":" + this.state.password
+                  ])
+                }
+              />
+            </div>
+          ) : (
+            <div />
+          )}
         </MuiThemeProvider>
       </div>
     );

@@ -12,6 +12,7 @@ def hello_world():
     getVersion =  subprocess.Popen(["python3", "../client.py", "127.0.0.1", "65432", "1" ,str(body, 'utf-8')], stdout=subprocess.PIPE).stdout
     version =  getVersion.read()
     result = "error"
+    # print(version)
     if "successful" in str(version):
         result = "Conectado correctamente"
         print("Bien")
